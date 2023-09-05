@@ -16,9 +16,11 @@ mongoConnect();
 
 //api
 import userRouter from "./src/routes/userRouter.js";
+import productRouter from "./src/routes/productRouter.js";
 import morgan from "morgan";
 
 app.use("/api/store/user", userRouter);
+app.use("/api/store/product", productRouter);
 //
 app.get("/", (req, res) => {
   res.json({
