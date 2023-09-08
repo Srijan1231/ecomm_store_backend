@@ -22,14 +22,13 @@ router.get("/:_id?", async (req, res, next) => {
 router.get("/category/:_id?", async (req, res, next) => {
   try {
     const { _id } = req.params;
-    console.log(_id);
 
-    const product = await getProductsByCategory(_id);
-    // console.log(product);
+    const products = await getProductsByCategory(_id);
+
     res.json({
       status: "success",
       message: "Here are the product/s by category",
-      product,
+      products,
     });
   } catch (error) {
     next(error);
