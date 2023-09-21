@@ -73,6 +73,7 @@ router.post("/", newUserValidation, async (req, res, next) => {
     next(error);
   }
 });
+router.get("/get/access_jwt", refreshAuth);
 
 router.post("/sign-in", loginValidation, async (req, res, next) => {
   try {
@@ -181,5 +182,28 @@ router.put("/update", auth, updateUserValidation, async (req, res, next) => {
     next(error);
   }
 });
+router.put(
+  "/update/fav",
+  auth,
+
+  async (req, res, next) => {
+    try {
+      const { _id, favourite, ...rest } = req.body;
+
+      const result = await updateUserById(req.body);
+      result?._id
+        ? res.json({
+            status: "success",
+            message: "Favourite has been updated successfully",
+          })
+        : res.json({
+            status: "error",
+            message: "Unable to update favourite, try again later",
+          });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default router;

@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    favourite: [
+      {
+        type: String,
+      },
+    ],
 
     refreshJWT: {
       type: String,
