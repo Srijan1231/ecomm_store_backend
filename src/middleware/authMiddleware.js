@@ -21,11 +21,9 @@ export const auth = async (req, res, next) => {
       //4. check if user is active
       const user = await getUserByEmail(decoded.email);
 
-      if (
-        user?._id //&& user?.status === "active"
-      ) {
+      if (user?._id) {
         user.refreshJWT = undefined;
-        user.password = undefined;
+        // user.password = undefined;
 
         req.userInfo = user;
         return next();
@@ -66,7 +64,7 @@ export const refreshAuth = async (req, res, next) => {
         refreshJWT: authorization,
       });
 
-      if (user?._id && user?.status === "active") {
+      if (user?._id) {
         // create new accessJWT
         const accessJWT = await createAccessJWT(decoded.email);
 

@@ -1,6 +1,7 @@
 import express from "express";
 import { comparePassword, hashPassword } from "../helper/bcrypt.js";
 import {
+  getOneUser,
   getUserByEmail,
   insertUser,
   updateUser,
@@ -12,7 +13,6 @@ import {
   updateUserValidation,
 } from "../middleware/joiValidation.js";
 
-import { v4 as uuidv4 } from "uuid";
 import { createAccessJWT, createRefreshJWT } from "../helper/jwt.js";
 import { auth, refreshAuth } from "../middleware/authMiddleware.js";
 import {
@@ -31,7 +31,6 @@ router.get("/", auth, (req, res, next) => {
       message: "here is the user info",
       user: req.userInfo,
     });
-    console.log(req.userInfo);
   } catch (error) {
     next(error);
   }
@@ -40,20 +39,15 @@ router.get("/", auth, (req, res, next) => {
 // create new user api
 router.post("/", newUserValidation, async (req, res, next) => {
   try {
-    console.log(req.body);
-    const { password } = req.body;
-
+    const { password, ...rest } = req.body;
     req.body.password = hashPassword(password);
-
-    //TODO create code and add with req.body
-    req.body.verificationCode = uuidv4(); // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
 
     const result = await insertUser(req.body);
 
     if (result?._id) {
       res.json({
         status: "success",
-        message: "Registered",
+        message: "Account created successfully",
       });
 
       return;
@@ -61,7 +55,7 @@ router.post("/", newUserValidation, async (req, res, next) => {
 
     res.json({
       status: "error",
-      message: "Unable to register now, Please try again later",
+      message: "Unable to add new admin, Please try again later",
     });
   } catch (error) {
     if (error.message.includes("E11000 duplicate key error")) {
@@ -73,6 +67,7 @@ router.post("/", newUserValidation, async (req, res, next) => {
     next(error);
   }
 });
+
 router.get("/get/access_jwt", refreshAuth);
 
 router.post("/sign-in", loginValidation, async (req, res, next) => {
@@ -112,9 +107,6 @@ router.post("/sign-in", loginValidation, async (req, res, next) => {
     next(error);
   }
 });
-
-// return the refreshJWT
-router.get("/get-accessjwt", refreshAuth);
 
 //logout
 router.post("/logout", async (req, res, next) => {
@@ -182,28 +174,50 @@ router.put("/update", auth, updateUserValidation, async (req, res, next) => {
     next(error);
   }
 });
-router.put(
-  "/update/fav",
-  auth,
 
-  async (req, res, next) => {
-    try {
-      const { _id, favourite, ...rest } = req.body;
+router.post("/update/fav", auth, async (req, res, next) => {
+  try {
+    const { _id, favourite } = req.body;
+    const user = await getOneUser({ _id });
 
-      const result = await updateUserById(req.body);
-      result?._id
+    if (user?.favouriteProduct.some((item) => item.slug === favourite.slug)) {
+      const newArrayOfFavItem = user.favouriteProduct.filter(
+        (item) => item._id.toString() !== favourite._id
+      );
+
+      const result = await updateUserById(
+        { _id },
+        { favouriteProduct: newArrayOfFavItem }
+      );
+      result
         ? res.json({
             status: "success",
-            message: "Favourite has been updated successfully",
+            message: "Removed from the list",
           })
         : res.json({
             status: "error",
-            message: "Unable to update favourite, try again later",
+            message: "Error",
           });
-    } catch (error) {
-      next(error);
+      return;
     }
+
+    const result = await updateUserById(
+      { _id },
+      { favouriteProduct: [...user?.favouriteProduct, favourite] }
+    );
+    result
+      ? res.json({
+          status: "success",
+          message: "Added to favourite",
+          favourite,
+        })
+      : res.json({
+          status: "error",
+          message: "Not able to add to favourite",
+        });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 export default router;

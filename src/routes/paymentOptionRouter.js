@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     const paymentOption = _id
       ? await getOnePaymentOption(_id)
       : await getPaymentOptions();
-    // console.log(products);
+
     res.json({
       status: "success",
       message: "Here are the paymentOption/s",

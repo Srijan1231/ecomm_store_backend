@@ -25,9 +25,37 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    favourite: [
+    favouriteProduct: [
       {
-        type: String,
+        _id: {
+          type: mongoose.Types.ObjectId,
+          required: false,
+          unique: true,
+        },
+        title: {
+          type: String,
+          required: true,
+        },
+        slug: {
+          type: String,
+
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
+
+        sku: {
+          type: String,
+
+          required: true,
+        },
+
+        thumbnail: {
+          type: String,
+          required: true,
+        },
       },
     ],
 
