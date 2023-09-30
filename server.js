@@ -22,7 +22,7 @@ import paymentOptionRouter from "./src/routes/paymentOptionRouter.js";
 import stripeRouter from "./src/routes/stripeRouter.js";
 import orderRouter from "./src/routes/orderRouter.js";
 import morgan from "morgan";
-import { auth } from "./src/middleware/authMiddleware.js";
+// import { auth } from "./src/middleware/authMiddleware.js";
 
 app.use("/api/store/user", userRouter);
 app.use("/api/store/product", productRouter);

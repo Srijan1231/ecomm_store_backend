@@ -18,7 +18,7 @@ const router = express.Router();
 //     next(error);
 //   }
 // });
-router.post("/", auth, async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     const result = await insertProduct(req.body);
 
@@ -27,7 +27,6 @@ router.post("/", auth, async (req, res, next) => {
         status: "success",
         message: "Order Placed ",
       });
-      console.log(result);
 
       return;
     }

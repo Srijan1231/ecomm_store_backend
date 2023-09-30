@@ -7,16 +7,17 @@ router.post("/", async (req, res, next) => {
     const secret = process.env.STRIPE_SECRET;
 
     const stripe = new Stripe(secret);
-    console.log(req.body);
+
     const { userInfo, orderItem, paymentStatus } = req.body;
     //return secret key
     const paymentIntent = await stripe.paymentIntents.create({
       amount: paymentStatus.totalPrice * 100,
       currency: "aud",
-      payment_method_types: [paymentStatus.paymentOption.slug],
-    });
 
-    res.send({ clientSecret: paymentIntent.client_secret });
+      automatic_payment_methods: { enabled: true },
+    });
+    const clientSecret = paymentIntent.client_secret;
+    res.json(clientSecret);
   } catch (error) {
     next(error);
   }
