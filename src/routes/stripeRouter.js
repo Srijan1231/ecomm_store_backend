@@ -16,6 +16,7 @@ router.post("/", async (req, res, next) => {
 
       automatic_payment_methods: { enabled: true },
     });
+
     const clientSecret = paymentIntent.client_secret;
     res.json(clientSecret);
   } catch (error) {
