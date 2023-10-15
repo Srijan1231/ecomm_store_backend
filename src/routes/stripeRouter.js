@@ -10,6 +10,7 @@ router.post("/", async (req, res, next) => {
 
     const { userInfo, orderItem, paymentStatus } = req.body;
     //return secret key
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: paymentStatus.totalPrice * 100,
       currency: "aud",

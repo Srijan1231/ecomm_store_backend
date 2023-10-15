@@ -1,5 +1,5 @@
 import express from "express";
-import { insertProduct } from "../model/order/orderModel.js";
+import { insertOrder } from "../model/order/orderModel.js";
 import { auth } from "../middleware/authMiddleware.js";
 // import {
 //   getOneProduct,
@@ -20,7 +20,7 @@ const router = express.Router();
 // });
 router.post("/", async (req, res, next) => {
   try {
-    const result = await insertProduct(req.body);
+    const result = await insertOrder(req.body);
 
     if (result?._id) {
       res.json({
